@@ -1,7 +1,7 @@
-import React, {useCallback} from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import {Layout, Menu,} from 'antd';
+import {Layout, Menu, MenuProps,} from 'antd';
 import { UserOutlined,  BarChartOutlined} from '@ant-design/icons';
 import {SideBarItems} from '../../../enums/SideBarItems';
 
@@ -11,37 +11,31 @@ interface Props {
 }
 
 const SideBar: React.FC<Props> = function (props: Props) {
+    const [current, setCurrent] = React.useState('settings');
+
     const { Sider} = Layout;
     const items = [
         {
-            key: 1,
+            key: 'settings',
             icon: React.createElement(UserOutlined),
             label: SideBarItems.USER_SETTINGS,
         },
         {
-            key: 2,
+            key: 'dashboard',
             icon: React.createElement(BarChartOutlined),
             label: SideBarItems.DASHBOARD,
         }
     ]
 
     const navigate = useNavigate();
-    const OnClickNavigate = useCallback(({ keyPath }: any) => {
-        console.log('OnClickNavigate',keyPath,)
-        const key = +keyPath[0];
-        switch (key){
-            case 1: {
-                navigate('/app/settings');
-                break;
-            }
-            case 2: {
-                navigate('/app/dashboard');
-                break;
-            } default : {
-                break;
-            }
-        }
-    }, [navigate])
+
+    const onClick: MenuProps['onClick'] = e => {
+        console.log('click ', e);
+        setCurrent(e.key);
+        navigate(`/app/${e.key}`);
+
+    };
+
   return (
       <Sider
           breakpoint="lg"
@@ -63,7 +57,8 @@ const SideBar: React.FC<Props> = function (props: Props) {
               mode="inline"
               defaultSelectedKeys={['4']}
               items={items}
-              onClick={OnClickNavigate}
+              selectedKeys={[current]}
+              onClick={onClick}
           />
       </Sider>
   );
